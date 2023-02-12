@@ -1,4 +1,4 @@
-#include "init.hpp"
+#include "Game.hpp"
 
 namespace gameInit {
 entt::handle orthographicCamera(Nz::EnttWorld& world, Nz::WindowSwapchain& windowSwapchain) {
@@ -43,12 +43,14 @@ entt::handle helloWorld(Nz::EnttWorld& world, Nz::Window& mainWindow) {
     return textEntity;
 }
 
-void eventHandling(Nz::WindowEventHandler& eventHandler, Nz::Application<Nz::Graphics>& app) {
+void eventHandling(Nz::WindowEventHandler& eventHandler, Nz::Application<Nz::Graphics>& app, struct EntityBundle& entities) {
     // Quand la fenetre est fermé
     eventHandler.OnQuit.Connect([&](const Nz::WindowEventHandler*)
     {
         app.Quit(); //< fermeture de l'application (et donc de la fenêtre)
     });
+
+    Nz::NodeComponent& textNode = entities.textEntity.get<Nz::NodeComponent>();
 
     // Lorsqu'une key est appuyé
     eventHandler.OnKeyPressed.Connect([&](const Nz::WindowEventHandler*, const Nz::WindowEvent::KeyEvent& key)
@@ -57,6 +59,18 @@ void eventHandling(Nz::WindowEventHandler& eventHandler, Nz::Application<Nz::Gra
         {
         case Nz::Keyboard::Scancode::Escape:
             app.Quit();
+            break;
+        case Nz::Keyboard::Scancode::Up:
+            textNode.Move(0, 100);
+            break;
+        case Nz::Keyboard::Scancode::Down:
+            textNode.Move(0, -100);
+            break;
+        case Nz::Keyboard::Scancode::Right:
+            textNode.Move(100, 0);
+            break;
+        case Nz::Keyboard::Scancode::Left:
+            textNode.Move(-100, 0);
             break;
         case Nz::Keyboard::Scancode::Space:
             fmt::print("Jump! Go ahead and jump!\n");
@@ -76,7 +90,7 @@ void eventHandling(Nz::WindowEventHandler& eventHandler, Nz::Application<Nz::Gra
             fmt::print("Space bar released.\n");
             break;
         default:
-            fmt::print("Key released: {}\n", Nz::Keyboard::GetKeyName(key.virtualKey));
+            //fmt::print("Key released: {}\n", Nz::Keyboard::GetKeyName(key.virtualKey));
             break;
         }
     });

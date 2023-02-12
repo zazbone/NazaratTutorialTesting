@@ -1,10 +1,7 @@
-#include <Nazara/Core.hpp>
-#include <Nazara/Graphics.hpp>
-#include <Nazara/Platform/AppWindowingComponent.hpp>
-#include <Nazara/Renderer.hpp>
-#include <Nazara/Utility.hpp>
-#include <iostream>
-#include "init.hpp"
+#include "Game.hpp"
+
+
+
 
 int main()
 {
@@ -25,6 +22,7 @@ int main()
     // Ajout des composante ecs et le world
     auto& ecs = app.AddComponent<Nz::AppEntitySystemComponent>();
     auto& world = ecs.AddWorld<Nz::EnttWorld>();
+    struct EntityBundle entities; 
 
     // Ajout de la composante pour le rendu
     auto& renderSystem = world.AddSystem<Nz::RenderSystem>();
@@ -33,13 +31,12 @@ int main()
 
     // Gestion des évènements
     Nz::WindowEventHandler& eventHandler = mainWindow.GetEventHandler();
-    gameInit::eventHandling(eventHandler, app);
 
-    [[maybe_unused]]
-    entt::handle cameraEntity = gameInit::orthographicCamera(world, windowSwapchain);
+    entities.cameraEntity = gameInit::orthographicCamera(world, windowSwapchain);
 
-    [[maybe_unused]]
-    entt::handle textEntity = gameInit::helloWorld(world, mainWindow);
+    entities.textEntity = gameInit::helloWorld(world, mainWindow);
+
+    gameInit::eventHandling(eventHandler, app, entities);
 
     // Une foin que  tout est déclarer on run l'app (main loop)
     return app.Run();
